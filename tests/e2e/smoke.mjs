@@ -2,8 +2,8 @@ import { chromium } from "playwright-core";
 const base = process.env.BASE ?? "http://localhost:4173";
 const b = await chromium.launch({ executablePath: "/usr/bin/google-chrome", args: ["--no-sandbox"] });
 const errors = [];
-for (const [name, w, h] of [["desktop", 1280, 900], ["mobile", 375, 800]]) {
-  const p = await b.newPage({ viewport: { width: w, height: h } });
+for (const [name, w, h] of [["desktop", 1280, 900], ["mobile", 390, 844]]) {
+  const p = await b.newPage({ viewport: { width: w, height: h } }); p.on("dialog", (d) => d.accept());
   p.on("pageerror", (e) => errors.push(name + " " + e.message));
   p.on("console", (m) => m.type() === "error" && errors.push(name + " console " + m.text()));
   await p.goto(base + "/"); await p.waitForSelector("h1");
@@ -16,6 +16,11 @@ for (const [name, w, h] of [["desktop", 1280, 900], ["mobile", 375, 800]]) {
   await p.goto(base + "/session/?mode=flashcards"); await p.getByRole("button", { name: "Commencer" }).click();
   await p.waitForTimeout(300); await p.keyboard.press(" "); await p.waitForTimeout(700);
   await p.screenshot({ path: `docs/screens/${name}-flashcard.png` });
+  await p.goto(base + "/session/?mode=qcm"); await p.getByRole("button", { name: "Commencer" }).click();
+  await p.waitForSelector('[role="radiogroup"]'); await p.keyboard.press("1"); await p.waitForTimeout(200);
+  await p.getByRole("button", { name: "Terminer" }).click(); await p.waitForTimeout(500);
+  const conf = p.getByRole("button", { name: /Terminer|Oui|Confirmer/ }); if (await conf.count()) await conf.last().click().catch(()=>{});
+  await p.waitForTimeout(500); await p.screenshot({ path: `docs/screens/${name}-results.png` });
   await p.goto(base + "/library/"); await p.fill('input[aria-label="Recherche"]', "IGB"); await p.waitForTimeout(300);
   await p.screenshot({ path: `docs/screens/${name}-library.png` });
   const sw = await p.evaluate(() => document.documentElement.scrollWidth - innerWidth);
