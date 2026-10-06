@@ -1,6 +1,6 @@
 "use client";
 import { Badge } from "./ui";
-import { KIND_LABEL, LEVEL_LABEL } from "@/lib/content";
+import { KIND_LABEL, LEVEL_LABEL, asset } from "@/lib/content";
 import type { Item } from "@/lib/types";
 
 export function Meta({ item }: { item: Item }) {
@@ -9,6 +9,7 @@ export function Meta({ item }: { item: Item }) {
       <Badge tone="blue">{KIND_LABEL[item.kind]}</Badge>
       <Badge>{item.group}</Badge>
       <Badge>{LEVEL_LABEL[item.level]}</Badge>
+      {item.autoOptions && <Badge tone="gray">Choix générés</Badge>}
       {item.unverified && <Badge tone="amber">À vérifier{item.reasons?.length ? " · " + item.reasons.join(", ") : ""}</Badge>}
     </div>
   );
@@ -93,9 +94,9 @@ export function Figure({ item }: { item: Item }) {
   if (!im) return null;
   return (
     <figure className="fig mt-3">
-      <a href={im.src} target="_blank" rel="noreferrer" aria-label={`Agrandir : ${im.caption}`}>
+      <a href={asset(im.src)} target="_blank" rel="noreferrer" aria-label={`Agrandir : ${im.caption}`}>
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={im.src} alt={`${im.caption} (${im.source})`} loading="lazy" />
+        <img src={asset(im.src)} alt={`${im.caption} (${im.source})`} loading="lazy" />
       </a>
       <figcaption>
         <span className="tag">{im.kind === "légende" ? "Schéma" : "Schéma lié"}</span> {im.caption} · {im.source}

@@ -479,11 +479,7 @@ export default function Session({
                 {it.kind === "case" || mode === "interview" ? (
                   <p className="text-sm text-muted">Réponds à voix haute comme en entretien, puis affiche la réponse modèle.</p>
                 ) : (
-                  <textarea
-                    aria-label="Ta réponse (facultatif)"
-                    placeholder="Écris ta réponse ici (facultatif), puis compare."
-                    className="min-h-24 w-full rounded-2xl border border-line bg-bg p-3 text-sm"
-                  />
+                  <p className="text-sm text-muted">Fais le calcul sur papier, puis affiche le résultat et compare.</p>
                 )}
                 <Button onClick={() => setRevealed(true)}>Afficher la réponse (Espace)</Button>
               </div>

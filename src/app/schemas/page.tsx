@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import slides from "@/data/slides.json";
+import { asset } from "@/lib/content";
 
 const THEMES: [string, number[]][] = [
   ["Vol et propulsion", [4,5,6,7,8,9,10]],
@@ -27,7 +28,7 @@ export default function Page() {
               {ps.map((p) => (
                 <button key={p} onClick={() => setSel(p)} className="fig text-left">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={by[p].file} alt={`${by[p].title}, diapo ${p}`} loading="lazy" />
+                  <img src={asset(by[p].file)} alt={`${by[p].title}, diapo ${p}`} loading="lazy" />
                   <figcaption><span className="tag">{p}</span> {by[p].title.charAt(0) + by[p].title.slice(1).toLowerCase()} · Présentation v3, diapo {p}</figcaption>
                 </button>
               ))}
@@ -37,7 +38,7 @@ export default function Page() {
         {sel && (
           <div role="dialog" aria-modal="true" onClick={() => setSel(null)} className="fixed inset-0 z-50 flex items-center justify-center bg-[#050b1a]/85 p-3">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={by[sel].file} alt={by[sel].title} className="max-h-full max-w-full rounded-2xl bg-white" />
+            <img src={asset(by[sel].file)} alt={by[sel].title} className="max-h-full max-w-full rounded-2xl bg-white" />
           </div>
         )}
       </div>

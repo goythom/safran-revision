@@ -1,7 +1,39 @@
 import raw from "@/data/content.json";
 import type { Item, Kind, Mode } from "./types";
 
-export const ITEMS = raw.items as unknown as Item[];
+function seeded(id: string) {
+  let h = 2166136261;
+  for (const c of id) h = Math.imul(h ^ c.charCodeAt(0), 16777619);
+  return () => ((h = Math.imul(h ^ (h >>> 15), 2246822507) >>> 0) % 100000) / 100000;
+}
+
+/** Les questions ouvertes deviennent des QCM: bonne réponse = réponse de la source,
+ *  distracteurs = réponses d'autres questions du même chapitre (rien n'est inventé). */
+function toChoice(all: Item[]): Item[] {
+  const opens = all.filter((i) => i.kind === "open" && i.answer);
+  return all.map((it) => {
+    if (it.kind !== "open" || !it.answer) return it;
+    const rnd = seeded(it.id);
+    const len = it.answer.length;
+    const others = opens.filter((o) => o.id !== it.id && o.answer !== it.answer);
+    const near = (o: Item, lo: number, hi: number) => o.answer!.length >= len * lo && o.answer!.length <= len * hi;
+    const same = others.filter((o) => o.group === it.group);
+    const tiers = [same.filter((o) => near(o, 0.5, 2)), same, others.filter((o) => near(o, 0.5, 2)), others];
+    const picked: string[] = [];
+    for (const t of tiers) {
+      const arr = [...t].sort(() => rnd() - 0.5);
+      for (const o of arr) {
+        if (picked.length >= 3) break;
+        if (!picked.includes(o.answer!)) picked.push(o.answer!);
+      }
+      if (picked.length >= 3) break;
+    }
+    const options = [...picked, it.answer].sort(() => rnd() - 0.5);
+    return { ...it, kind: "qcm" as Kind, origKind: "open" as Kind, autoOptions: true, options, correct: options.indexOf(it.answer), explanation: undefined };
+  });
+}
+
+export const ITEMS = toChoice(raw.items as unknown as Item[]);
 export const GROUPS = raw.groups as string[];
 export const BY_ID: Record<string, Item> = Object.fromEntries(
   ITEMS.map((i) => [i.id, i]),
@@ -52,9 +84,9 @@ export const MODES: Record<Mode, ModeMeta> = {
     feedback: true,
   },
   open: {
-    label: "Questions ouvertes",
-    desc: "Réponds à voix haute ou par écrit, compare avec la réponse attendue, puis auto-évalue.",
-    kinds: ["open"],
+    label: "Questions de compréhension",
+    desc: "Les anciennes questions ouvertes, en choix multiples: choisis la bonne réponse parmi 4.",
+    kinds: ["qcm"],
     defaultCount: 10,
     feedback: true,
   },
@@ -91,9 +123,12 @@ export const MODES: Record<Mode, ModeMeta> = {
   interview: {
     label: "Simulation d'entretien",
     desc: "Une question orale à la fois, 90 secondes pour répondre, puis réponse modèle, pièges et relances.",
-    kinds: ["case", "open"],
+    kinds: ["case", "qcm"],
     defaultCount: 8,
     timed: 90,
     feedback: true,
   },
 };
+
+/** Préfixe le chemin des fichiers statiques (utile sous GitHub Pages). */
+export const asset = (p: string) => (process.env.NEXT_PUBLIC_BASE_PATH ?? "") + p;

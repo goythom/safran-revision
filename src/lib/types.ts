@@ -14,6 +14,8 @@ export interface Item {
   source: string;
   unverified: boolean;
   reasons?: string[];
+  origKind?: Kind;
+  autoOptions?: boolean;
   image?: { src: string; page: number; caption: string; source: string; kind: string };
   en?: string;
   qtype?: string;
