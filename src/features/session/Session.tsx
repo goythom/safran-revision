@@ -226,7 +226,7 @@ export default function Session({
                     key={g}
                     onClick={() => toggleGroup(g)}
                     aria-pressed={cfg.groups.includes(g)}
-                    className={cx("rounded-full border px-3 py-1 text-xs", cfg.groups.includes(g) ? "border-brand bg-brand/10 text-brand" : "border-line")}
+                    className={cx("rounded-[3px] border px-3 py-1 text-xs", cfg.groups.includes(g) ? "border-brand bg-brand-soft text-brand" : "border-line")}
                   >
                     {g}
                   </button>
@@ -236,7 +236,7 @@ export default function Session({
             <div className="grid gap-4 sm:grid-cols-2">
               <label className="text-sm">
                 <span className="mb-1 block font-semibold">Niveau</span>
-                <select className="w-full rounded-xl border border-line bg-bg px-3 py-2" value={cfg.level} onChange={(e) => setCfg({ ...cfg, level: Number(e.target.value) })}>
+                <select className="w-full rounded-[3px] border border-line bg-bg px-3 py-2" value={cfg.level} onChange={(e) => setCfg({ ...cfg, level: Number(e.target.value) })}>
                   <option value={0}>Tous</option>
                   <option value={1}>Débutant</option>
                   <option value={2}>Intermédiaire</option>
@@ -287,8 +287,8 @@ export default function Session({
     return (
       <div className="mx-auto max-w-3xl space-y-5">
         <Card className="text-center">
-          <p className="text-sm text-muted">{meta.label} terminé en {fmt(seconds)}</p>
-          <p className="my-2 text-5xl font-bold">{score % 1 ? score.toFixed(1) : score}<span className="text-2xl text-muted"> / {total}</span></p>
+          <p className="eyebrow">{meta.label} terminé en {fmt(seconds)}</p>
+          <p className="serif my-3 text-[80px] font-medium leading-[84px]">{score % 1 ? score.toFixed(1) : score}<span className="text-3xl text-muted"> / {total}</span></p>
           <Badge tone={ratio >= 0.7 ? "green" : ratio >= 0.4 ? "amber" : "red"}>{pct(ratio)}</Badge>
           <p className="mt-3 text-sm text-muted">
             {ratio >= 0.8 ? "Solide. Passe à un niveau supérieur ou à l'examen." : ratio >= 0.5 ? "Correct. Refais les erreurs pour les fixer." : "Pas encore. Relis la correction puis refais les erreurs."}
@@ -323,7 +323,7 @@ export default function Session({
                   <p className="mt-1 text-sm text-rose-600">Ta réponse : {p.item.options?.[answers[p.item.id].chosen as number]}</p>
                 )}
                 {answers[p.item.id]?.timedOut && <p className="mt-1 text-sm text-rose-600">Temps écoulé.</p>}
-                <div className="mt-2 rounded-xl bg-emerald-500/10 p-3"><AnswerBody item={p.item} /></div>
+                <div className="mt-2 rounded-[3px] bg-emerald-500/10 p-3"><AnswerBody item={p.item} /></div>
                 <Source item={p.item} />
               </Card>
             ))}
@@ -363,9 +363,9 @@ export default function Session({
         <div className="flex items-start justify-between gap-2">
           <Meta item={it} />
           <div className="flex shrink-0 gap-1">
-            <button aria-label="Favori" aria-pressed={!!flags?.fav} onClick={() => toggleFlag(it.id, "fav")} className={cx("rounded-lg border border-line px-2 py-1 text-sm", flags?.fav && "bg-amber-400/30")}>★</button>
-            <button aria-label="Marquer à revoir" aria-pressed={!!flags?.review} onClick={() => toggleFlag(it.id, "review")} className={cx("rounded-lg border border-line px-2 py-1 text-sm", flags?.review && "bg-rose-500/20")}>↻</button>
-            <button aria-label="Marquer maîtrisée" aria-pressed={!!flags?.mastered} onClick={() => toggleFlag(it.id, "mastered")} className={cx("rounded-lg border border-line px-2 py-1 text-sm", flags?.mastered && "bg-emerald-500/20")}>✓</button>
+            <button aria-label="Favori" aria-pressed={!!flags?.fav} onClick={() => toggleFlag(it.id, "fav")} className={cx("rounded-[3px] border border-line px-2 py-1 text-sm", flags?.fav && "bg-amber-400/30")}>★</button>
+            <button aria-label="Marquer à revoir" aria-pressed={!!flags?.review} onClick={() => toggleFlag(it.id, "review")} className={cx("rounded-[3px] border border-line px-2 py-1 text-sm", flags?.review && "bg-rose-500/20")}>↻</button>
+            <button aria-label="Marquer maîtrisée" aria-pressed={!!flags?.mastered} onClick={() => toggleFlag(it.id, "mastered")} className={cx("rounded-[3px] border border-line px-2 py-1 text-sm", flags?.mastered && "bg-emerald-500/20")}>✓</button>
           </div>
         </div>
 
@@ -376,20 +376,20 @@ export default function Session({
                 onClick={() => setRevealed(true)}
                 aria-hidden={revealed}
                 tabIndex={revealed ? -1 : 0}
-                className="flip-face flex min-h-56 w-full flex-col items-center justify-center rounded-2xl border border-line bg-bg p-6 text-center"
+                className="flip-face flex min-h-56 w-full flex-col items-center justify-center rounded-[3px] border border-line bg-bg p-6 text-center"
               >
                 <span className="text-xs uppercase tracking-wide text-muted">{it.kind === "assoc" ? "Terme" : "Question"}</span>
                 <span className="mt-2 text-xl font-semibold">{it.question}</span>
                 <span className="mt-4 text-xs text-muted">Touche pour retourner (Espace)</span>
               </button>
-              <div className="flip-face flip-back flex min-h-56 flex-col items-center justify-center overflow-auto rounded-2xl border border-brand/40 bg-brand/5 p-6 text-center" aria-hidden={!revealed}>
-                <span className="text-xs uppercase tracking-wide text-muted">Réponse</span>
-                <div className="mt-2 text-lg"><AnswerBody item={it} /></div>
+              <div className="flip-face flip-back flex min-h-56 flex-col items-center justify-center overflow-auto rounded-[3px] border border-ink/70 bg-surface p-6 text-center" aria-hidden={!revealed}>
+                <span className="eyebrow">Réponse</span>
+                <div className="serif mt-2 text-[22px] leading-8"><AnswerBody item={it} /></div>
               </div>
             </div>
           </div>
         ) : (
-          <p className="text-xl font-semibold leading-8 md:text-[22px]">{it.question}</p>
+          <p className="serif text-[22px] font-medium leading-8 md:text-[26px] md:leading-9">{it.question}</p>
         )}
 
         {it.kind === "qcm" && cur.order && (
@@ -407,7 +407,7 @@ export default function Session({
                       disabled={showFb}
                       onClick={() => pick(d)}
                       className={cx(
-                        "flex min-h-14 w-full items-start gap-3 rounded-xl border p-3 text-left text-base transition-colors duration-150",
+                        "flex min-h-14 w-full items-start gap-3 rounded-[3px] border p-3 text-left text-base transition-colors duration-150",
                         !showFb && !chosen && "border-line hover:border-brand",
                         !showFb && chosen && "border-brand bg-brand-soft",
                         showFb && good && "border-ok bg-ok-soft",
@@ -415,7 +415,7 @@ export default function Session({
                         showFb && !chosen && !good && "border-line opacity-70",
                       )}
                     >
-                      <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-line text-sm font-semibold">
+                      <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-[3px] border border-line text-sm font-semibold">
                         {showFb && good ? <Check className="h-4 w-4 text-ok" aria-label="Bonne réponse" /> : showFb && chosen ? <X className="h-4 w-4 text-bad" aria-label="Mauvaise réponse" /> : "ABCD"[d]}
                       </span>
                       <span className="pt-0.5">{it.options?.[orig]}</span>
@@ -446,9 +446,9 @@ export default function Session({
                   disabled={showFb}
                   onClick={() => pick(d)}
                   className={cx(
-                    "min-h-14 rounded-xl border p-4 text-lg font-semibold",
+                    "min-h-14 rounded-[3px] border p-4 text-lg font-semibold",
                     !showFb && !chosen && "border-line hover:border-brand",
-                    !showFb && chosen && "border-brand bg-brand/10",
+                    !showFb && chosen && "border-brand bg-brand-soft",
                     showFb && good && "border-ok bg-ok-soft",
                     showFb && chosen && !good && "border-bad bg-bad-soft",
                   )}
@@ -463,7 +463,7 @@ export default function Session({
 
         {/* feedback for choice questions */}
         {choice && meta.feedback && revealed && (
-          <div className={cx("rounded-xl p-4 text-base", ans?.score === 1 ? "bg-ok-soft" : "bg-bad-soft")} aria-live="polite">
+          <div className={cx("rounded-[3px] p-4 text-base", ans?.score === 1 ? "bg-ok-soft" : "bg-bad-soft")} aria-live="polite">
             <p className="mb-1 font-semibold">{ans?.timedOut ? "Temps écoulé." : ans?.score === 1 ? "Bonne réponse." : "Mauvaise réponse."}</p>
             {it.kind === "vf" ? <p className="font-medium">{it.correct ? "Vrai" : "Faux"}</p> : null}
             {it.explanation && <p className="whitespace-pre-line">{it.explanation}</p>}
@@ -482,13 +482,13 @@ export default function Session({
                   <textarea
                     aria-label="Ta réponse (facultatif)"
                     placeholder="Écris ta réponse ici (facultatif), puis compare."
-                    className="min-h-24 w-full rounded-xl border border-line bg-bg p-3 text-sm"
+                    className="min-h-24 w-full rounded-[3px] border border-line bg-bg p-3 text-sm"
                   />
                 )}
                 <Button onClick={() => setRevealed(true)}>Afficher la réponse (Espace)</Button>
               </div>
             ) : (
-              <div className="rounded-xl bg-brand/5 p-4"><AnswerBody item={it} /><Source item={it} /></div>
+              <div className="rounded-[3px] bg-brand-soft p-4"><AnswerBody item={it} /><Source item={it} /></div>
             )}
           </>
         )}

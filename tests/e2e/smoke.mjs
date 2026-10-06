@@ -6,7 +6,7 @@ for (const [name, w, h] of [["desktop", 1280, 900], ["mobile", 390, 844]]) {
   const p = await b.newPage({ viewport: { width: w, height: h } }); p.on("dialog", (d) => d.accept());
   p.on("pageerror", (e) => errors.push(name + " " + e.message));
   p.on("console", (m) => m.type() === "error" && errors.push(name + " console " + m.text()));
-  await p.goto(base + "/"); await p.waitForSelector("h1");
+  await p.goto(base + "/"); await p.waitForSelector("h1"); await p.waitForTimeout(2000);
   await p.screenshot({ path: `docs/screens/${name}-dashboard.png`, fullPage: false });
   await p.goto(base + "/session/?mode=qcm"); await p.getByRole("button", { name: "Commencer" }).click();
   await p.waitForSelector('[role="radiogroup"]');

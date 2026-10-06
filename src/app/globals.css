@@ -3,19 +3,19 @@
 
 /* Palette from the design brief (R2): Safran blue, AA contrast */
 :root {
-  --bg: #f6f8fb;
-  --surface: #ffffff;
-  --line: #d5dce6;
-  --ink: #111827;
-  --muted: #4b5563;
-  --brand: #1763a9;
-  --brand-soft: #e3eef9;
-  --ok: #15803d;
-  --ok-soft: #dcfce7;
-  --bad: #b42318;
-  --bad-soft: #fee4e2;
-  --warn: #b45309;
-  --warn-soft: #fef3c7;
+  --bg: #f6f3ec;
+  --surface: #fbf9f5;
+  --line: #d8d3c8;
+  --ink: #16181b;
+  --muted: #5a5e63;
+  --brand: #0f4c8a;
+  --brand-soft: #e6ecf3;
+  --ok: #1d6638;
+  --ok-soft: #e4efe6;
+  --bad: #a1291e;
+  --bad-soft: #f5e3e0;
+  --warn: #7f5200;
+  --warn-soft: #f4ead2;
 }
 .dark {
   --bg: #0b1626;
@@ -48,9 +48,14 @@
   --color-warn-soft: var(--warn-soft);
 }
 body {
-  background: var(--bg);
+  background-color: var(--bg);
+  background-image:
+    linear-gradient(to right, color-mix(in srgb, var(--ink) 5%, transparent) 1px, transparent 1px),
+    linear-gradient(to bottom, color-mix(in srgb, var(--ink) 5%, transparent) 1px, transparent 1px);
+  background-size: 24px 24px;
   color: var(--ink);
   font-family: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
   font-size: 16px;
   line-height: 24px;
 }
@@ -66,3 +71,32 @@ body {
 @media (prefers-reduced-motion: reduce) { .flip-inner { transition: none; } }
 
 .tabnum { font-variant-numeric: tabular-nums; }
+
+.serif { font-family: var(--font-serif), Georgia, serif; font-optical-sizing: auto; }
+h1, h2, h3 { font-family: var(--font-serif), Georgia, serif; font-weight: 500; letter-spacing: -0.01em; }
+.mono { font-family: var(--font-mono), ui-monospace, monospace; }
+.eyebrow { font-family: var(--font-mono), ui-monospace, monospace; font-size: 11.5px; line-height: 16px; letter-spacing: 0.12em; text-transform: uppercase; font-weight: 600; color: var(--muted); }
+
+/* Planche technique: repères de coin sur les cartes */
+.plate { position: relative; background-color: var(--surface); }
+.plate::before, .plate::after { content: ""; position: absolute; width: 12px; height: 12px; pointer-events: none; }
+.plate::before { top: -1px; left: -1px; border-top: 2px solid var(--ink); border-left: 2px solid var(--ink); }
+.plate::after { bottom: -1px; right: -1px; border-bottom: 2px solid var(--ink); border-right: 2px solid var(--ink); }
+/* Ligne de cote: graduations tous les 10 % */
+.dim { position: relative; height: 10px; }
+.dim::before { content: ""; position: absolute; inset: 0 0 3px 0; background: repeating-linear-gradient(90deg, color-mix(in srgb, var(--ink) 45%, transparent) 0 1px, transparent 1px 10%); border-right: 1px solid color-mix(in srgb, var(--ink) 45%, transparent); }
+.dim > div { position: absolute; left: 0; bottom: 0; height: 3px; }
+/* Micro-interactions */
+button, a { -webkit-tap-highlight-color: transparent; }
+.press { transition: transform 120ms, background-color 150ms, border-color 150ms; }
+.press:active { transform: translateY(1px); }
+.row { position: relative; transition: background-color 150ms; }
+.row::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 2px; background: var(--brand); transform: scaleY(0); transform-origin: top; transition: transform 180ms; }
+.row:hover::before, .row:focus-visible::before { transform: scaleY(1); }
+.row:hover .row-n { color: var(--brand); }
+@media (prefers-reduced-motion: reduce) { .row::before, .press { transition: none; } }
+@keyframes draw { to { stroke-dashoffset: 0; } }
+.draw { stroke-dasharray: 1; stroke-dashoffset: 1; animation: draw 1.6s ease-out forwards; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.gear-spin { transform-origin: 200px 200px; animation: spin 240s linear infinite; }
+@media (prefers-reduced-motion: reduce) { .draw, .gear-spin { animation: none; stroke-dashoffset: 0; } }
