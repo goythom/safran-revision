@@ -9,7 +9,7 @@ export function Meta({ item }: { item: Item }) {
       <Badge tone="blue">{KIND_LABEL[item.kind]}</Badge>
       <Badge>{item.group}</Badge>
       <Badge>{LEVEL_LABEL[item.level]}</Badge>
-      {item.unverified && <Badge tone="amber">À vérifier (XX ou déduit)</Badge>}
+      {item.unverified && <Badge tone="amber">À vérifier{item.reasons?.length ? " · " + item.reasons.join(", ") : ""}</Badge>}
     </div>
   );
 }
@@ -65,7 +65,7 @@ export function AnswerBody({ item }: { item: Item }) {
         <Block title="Étapes" text={item.steps} />
         <Block title="Résultat" text={item.result} />
         <Block title="Interprétation" text={item.explanation} />
-        <p className="mt-2 text-xs text-amber-700 dark:text-amber-300">Exemple pédagogique : valeurs d&apos;exercice, pas des données moteur.</p>
+        <p className="mt-2 text-xs text-warn">Exemple pédagogique : valeurs d&apos;exercice, pas des données moteur.</p>
       </div>
     );
   }
@@ -84,5 +84,23 @@ export function AnswerBody({ item }: { item: Item }) {
       <p className="whitespace-pre-line">{item.answer}</p>
       {item.en && <p className="mt-2 text-sm text-muted">EN : {item.en}</p>}
     </div>
+  );
+}
+
+/** Schéma issu de la présentation v3, avec sa source. */
+export function Figure({ item }: { item: Item }) {
+  const im = item.image;
+  if (!im) return null;
+  return (
+    <figure className="fig mt-3">
+      <a href={im.src} target="_blank" rel="noreferrer" aria-label={`Agrandir : ${im.caption}`}>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src={im.src} alt={`${im.caption} (${im.source})`} loading="lazy" />
+      </a>
+      <figcaption>
+        <span className="tag">{im.kind === "légende" ? "Schéma" : "Schéma lié"}</span> {im.caption} · {im.source}
+        {im.kind !== "légende" && " · lien déduit du sujet de la question"}
+      </figcaption>
+    </figure>
   );
 }

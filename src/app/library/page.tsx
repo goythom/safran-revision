@@ -1,7 +1,7 @@
 "use client";
 import { Suspense, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { AnswerBody, Meta, Source } from "@/components/ItemBody";
+import { AnswerBody, Figure, Meta, Source } from "@/components/ItemBody";
 import { Button, Card, cx } from "@/components/ui";
 import { GROUPS, ITEMS, KIND_LABEL, LEVEL_LABEL } from "@/lib/content";
 import { useAppState } from "@/lib/hooks";
@@ -42,7 +42,7 @@ function Library() {
     });
   }, [q, kind, group, level, flag, state.progress]);
 
-  const sel = "rounded-[3px] border border-line bg-surface px-3 py-2 text-sm";
+  const sel = "rounded-2xl border border-line bg-surface px-3 py-2 text-sm";
   return (
     <div className="space-y-5">
       <header>
@@ -55,7 +55,7 @@ function Library() {
           onChange={(e) => { setQ(e.target.value); setLimit(30); }}
           placeholder="Rechercher (ex : IGB, couple, rapport de réduction, Q-A4...)"
           aria-label="Recherche"
-          className="w-full rounded-[3px] border border-line bg-bg px-4 py-2.5"
+          className="w-full rounded-2xl border border-line bg-bg px-4 py-2.5"
         />
         <div className="flex flex-wrap gap-2">
           <select aria-label="Type" className={sel} value={kind} onChange={(e) => { setKind(e.target.value); setLimit(30); }}>
@@ -76,7 +76,7 @@ function Library() {
             <option value="review">À revoir</option>
             <option value="mastered">Maîtrisées</option>
             <option value="todo">Pas encore maîtrisées</option>
-            <option value="unverified">À vérifier (XX / déduit)</option>
+            <option value="unverified">À vérifier (XX, déduit, source)</option>
           </select>
         </div>
         <p className="text-sm text-muted" aria-live="polite">{list.length} résultat{list.length > 1 ? "s" : ""}</p>
@@ -98,7 +98,7 @@ function Library() {
 function Row({ it, open, onToggle }: { it: Item; open: boolean; onToggle: () => void }) {
   const state = useAppState();
   const p = state.progress[it.id];
-  const chip = (on: boolean) => cx("rounded-[3px] border px-2.5 py-1 text-xs font-medium", on ? "border-brand bg-brand-soft text-brand" : "border-line");
+  const chip = (on: boolean) => cx("rounded-2xl border px-2.5 py-1 text-xs font-medium", on ? "border-brand bg-brand-soft text-brand" : "border-line");
   return (
     <li>
       <Card className="p-4">
@@ -110,9 +110,10 @@ function Row({ it, open, onToggle }: { it: Item; open: boolean; onToggle: () => 
           <div className="mt-3 border-t border-line pt-3">
             {it.options && (
               <ol className="mb-2 list-[upper-alpha] pl-6 text-sm text-muted">
-                {it.options.map((o, i) => <li key={i} className={i === it.correct ? "font-semibold text-emerald-600" : ""}>{o}</li>)}
+                {it.options.map((o, i) => <li key={i} className={i === it.correct ? "font-semibold text-ok" : ""}>{o}</li>)}
               </ol>
             )}
+            <Figure item={it} />
             <AnswerBody item={it} />
             <Source item={it} />
           </div>

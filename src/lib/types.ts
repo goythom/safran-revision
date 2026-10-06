@@ -13,6 +13,8 @@ export interface Item {
   explanation?: string;
   source: string;
   unverified: boolean;
+  reasons?: string[];
+  image?: { src: string; page: number; caption: string; source: string; kind: string };
   en?: string;
   qtype?: string;
   keyPoints?: string;

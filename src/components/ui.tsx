@@ -1,17 +1,19 @@
 "use client";
 import type { ButtonHTMLAttributes, ReactNode } from "react";
+import { ChevronRight } from "lucide-react";
 
 export function cx(...a: (string | false | null | undefined)[]) {
   return a.filter(Boolean).join(" ");
 }
 
-type Variant = "primary" | "ghost" | "good" | "bad" | "warn";
+type Variant = "primary" | "ghost" | "good" | "bad" | "warn" | "light";
 const V: Record<Variant, string> = {
-  primary: "bg-ink text-bg hover:bg-brand",
-  ghost: "border border-ink/30 bg-transparent hover:border-ink",
-  good: "bg-ok text-white hover:opacity-90 dark:text-[#0b1626]",
-  bad: "bg-bad text-white hover:opacity-90 dark:text-[#0b1626]",
-  warn: "bg-warn-soft text-warn border border-warn/40 hover:opacity-90",
+  primary: "btn-primary",
+  ghost: "btn-ghost",
+  good: "btn-good",
+  bad: "btn-bad",
+  warn: "btn-warn",
+  light: "btn-light",
 };
 
 export function Button({
@@ -20,14 +22,10 @@ export function Button({
   ...p
 }: ButtonHTMLAttributes<HTMLButtonElement> & { variant?: Variant }) {
   return (
-    <button
-      {...p}
-      className={cx(
-        "press inline-flex min-h-11 items-center justify-center gap-2 rounded-[3px] px-5 py-2.5 text-[15px] font-medium transition-colors duration-150 disabled:opacity-40",
-        V[variant],
-        className,
-      )}
-    />
+    <button {...p} className={cx("btn", V[variant], className)}>
+      {p.children}
+      {(variant === "primary" || variant === "light") && <span className="btn-arrow" aria-hidden><ChevronRight className="h-4 w-4" /></span>}
+    </button>
   );
 }
 
@@ -39,7 +37,7 @@ export function Card({
   className?: string;
 }) {
   return (
-    <div className={cx("plate border border-line p-5 md:p-6", className)}>
+    <div className={cx("card p-5 md:p-6", className)}>
       {children}
     </div>
   );
@@ -53,24 +51,24 @@ export function Badge({
   tone?: "gray" | "blue" | "green" | "amber" | "red";
 }) {
   const t = {
-    gray: "border-line text-muted",
-    blue: "border-brand/50 text-brand",
-    green: "border-ok/50 text-ok",
-    amber: "border-warn/60 bg-warn-soft text-warn",
-    red: "border-bad/50 text-bad",
+    gray: "bg-black/[0.06] text-muted",
+    blue: "bg-brand-soft text-brand",
+    green: "bg-ok-soft text-ok",
+    amber: "bg-warn-soft text-warn",
+    red: "bg-bad-soft text-bad",
   }[tone];
   return (
-    <span className={cx("mono inline-block rounded-[2px] border px-1.5 py-px text-[11px] font-medium uppercase tracking-wider", t)}>
+    <span className={cx("chip-b", t)}>
       {children}
     </span>
   );
 }
 
-export function Progress({ value, tone = "brand" }: { value: number; tone?: "brand" | "green" }) {
+export function Progress({ value, onHero }: { value: number; tone?: "brand" | "green"; onHero?: boolean }) {
   const v = Math.max(0, Math.min(100, value));
   return (
-    <div className="dim" role="progressbar" aria-valuenow={Math.round(v)} aria-valuemin={0} aria-valuemax={100}>
-      <div className={cx("transition-all duration-300", tone === "green" ? "bg-ink" : "bg-brand")} style={{ width: `${v}%` }} />
+    <div className={cx("bar", onHero && "on-hero")} role="progressbar" aria-valuenow={Math.round(v)} aria-valuemin={0} aria-valuemax={100}>
+      <div style={{ width: `${Math.max(v, v > 0 ? 3 : 0)}%` }} />
     </div>
   );
 }

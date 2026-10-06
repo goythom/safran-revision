@@ -1,8 +1,9 @@
 "use client";
 import Link from "next/link";
 import { useRef } from "react";
-import { Button, Progress, pct } from "@/components/ui";
-import Gear from "@/components/Gear";
+import { Button, Card, Progress, pct } from "@/components/ui";
+import { ModeIcon } from "@/components/icons";
+import { CheckCircle2, Eye, Flame } from "lucide-react";
 import {} from "@/components/icons";
 import { MODES } from "@/lib/content";
 import { useAppState } from "@/lib/hooks";
@@ -35,68 +36,64 @@ export default function Dashboard() {
     a.click();
   }
 
+  const todo = o.due + o.toReview;
   return (
-    <div className="space-y-14">
-      <header className="relative">
-        <Gear className="pointer-events-none absolute -right-20 -top-8 -z-0 h-[300px] w-[300px] text-brand opacity-[0.2] md:right-0 md:top-0 md:h-[340px] md:w-[340px] md:opacity-30" />
-        <div className="relative max-w-2xl">
-        <p className="eyebrow">Safran Aircraft Engines · Entretien</p>
-        <h1 className="mt-3 text-[40px] font-medium leading-[44px] md:text-[56px] md:leading-[60px]">
-          Intégration des transmissions mécaniques
-        </h1>
-        <p className="mt-4 max-w-xl text-[17px] leading-7 text-muted">
-          {o.total} questions tirées de ton rapport, de tes slides et de ton questionnaire. Rien d&apos;inventé: ce qui reste à
-          vérifier est signalé.
+    <div className="space-y-10">
+      <header className="rise">
+        <p className="tag">Entretien Safran Aircraft Engines</p>
+        <h1 className="mt-2 text-[38px] leading-[42px] md:text-[56px] md:leading-[58px]">Prépare ton entretien <span className="gt">sans rien oublier</span></h1>
+      </header>
+
+      <section className="hero rise p-6 md:p-8" style={{ animationDelay: "60ms" }} aria-label="Révision du jour">
+        <p className="tag">Révision du jour</p>
+        <p className="mt-2 text-[28px] font-extrabold leading-9 md:text-4xl md:leading-[44px]">
+          {o.seen === 0 ? "Lance ta première session" : todo > 0 ? `${todo} notions à revoir` : "Tu es à jour"}
         </p>
-        <div className="mt-7 flex flex-wrap items-center gap-x-6 gap-y-3">
-          <Link href="/session/?mode=adaptive">
-            <Button>Lancer la révision du jour</Button>
-          </Link>
+        <p className="mt-1 max-w-md text-[15px] text-white/85">
+          {o.total} questions tirées de ton rapport, de tes slides et de ton questionnaire. 10 minutes suffisent.
+        </p>
+        <div className="mt-5 max-w-md">
+          <Progress value={(o.mastered / o.total) * 100} onHero />
+          <p className="mt-2 text-sm font-semibold text-white/85">{o.mastered} maîtrisées sur {o.total}</p>
+        </div>
+        <div className="mt-5 flex flex-wrap gap-2">
+          <span className="pill">{o.total} questions</span>
+          <span className="pill">Rapport v3 · Slides v3</span>
+          <span className="pill">Progression sur cet appareil</span>
+        </div>
+        <div className="mt-6 flex flex-wrap items-center gap-4">
+          <Link href="/session/?mode=adaptive"><Button variant="light">Commencer</Button></Link>
           {o.toReview > 0 && (
-            <Link href="/session/?mode=adaptive&review=1" className="text-[15px] underline underline-offset-4">
-              Réviser mes {o.toReview} notions à revoir
+            <Link href="/session/?mode=adaptive&review=1" className="text-[15px] font-bold underline underline-offset-4">
+              Seulement mes {o.toReview} à revoir
             </Link>
           )}
         </div>
-        </div>
-        <dl className="mono relative mt-10 grid grid-cols-2 border border-ink/80 text-[11.5px] uppercase tracking-wider md:grid-cols-4">
-          {[["Projet", "Prépa entretien"], ["Sujet", "MOA · transmissions"], ["Sources", "Rapport v3 · Slides v3 · Questionnaire"], ["Rév.", "06/10/2026"]].map(([k, v], i) => (
-            <div key={k} className={"bg-surface px-3 py-2 " + (i % 2 === 0 ? "border-r border-ink/80 " : "") + (i < 2 ? "border-b border-ink/80 md:border-b-0 " : "") + (i < 3 ? "md:border-r md:border-ink/80" : "md:border-r-0")}>
-              <dt className="text-muted">{k}</dt>
-              <dd className="mt-0.5 normal-case tracking-normal text-[13px]">{v}</dd>
-            </div>
-          ))}
-        </dl>
-      </header>
-
-      <section aria-label="Statistiques" className="grid grid-cols-2 border-y border-ink/80 md:grid-cols-4">
-        <Stat label="Maîtrisées" value={`${o.mastered}`} sub={`sur ${o.total}`} />
-        <Stat label="Déjà vues" value={`${o.seen}`} sub={pct(o.seen / o.total)} />
-        <Stat label="À revoir" value={`${o.due + o.toReview}`} sub="aujourd'hui" />
-        <Stat label="Série" value={`${streak}`} sub={avg === null ? "jours · aucune session" : `jours · moyenne ${pct(avg)}`} />
       </section>
 
-      <section id="modes" aria-label="Modes de révision" className="scroll-mt-4">
-        <h2 className="text-[28px] leading-9"><span className="mono mr-3 text-sm text-brand">A.</span>Modes de révision</h2>
-        <ol className="mt-5 border-t border-ink/80">
+      <section aria-label="Statistiques" className="grid grid-cols-3 gap-3">
+        <Stat icon={<Flame className="h-6 w-6 text-[#ff9600]" />} value={`${streak}`} label={streak > 1 ? "jours d'affilée" : "jour d'affilée"} />
+        <Stat icon={<CheckCircle2 className="h-6 w-6 text-ok" />} value={`${o.mastered}`} label="maîtrisées" />
+        <Stat icon={<Eye className="h-6 w-6 text-brand" />} value={`${o.seen}`} label="déjà vues" />
+      </section>
+
+      <section id="modes" aria-label="Modes de révision" className="scroll-mt-6">
+        <p className="tag mb-2">Modes</p>
+        <h2 className="mb-5 text-[30px] leading-9">Choisis comment réviser</h2>
+        <div className="grid grid-cols-2 gap-3 md:grid-cols-3">
           {ORDER.map((m, i) => (
-            <li key={m} className="border-b border-line">
-              <Link href={`/session/?mode=${m}`} className="row group grid grid-cols-[2.75rem_1fr_auto] items-baseline gap-x-3 py-4 pl-3 hover:bg-surface">
-                <span className="row-n mono text-sm text-muted transition-colors">{String(i + 1).padStart(2, "0")}</span>
-                <span>
-                  <span className="serif block text-xl leading-7">{MODES[m].label}</span>
-                  <span className="mt-0.5 block text-[15px] leading-6 text-muted">{MODES[m].desc}</span>
-                </span>
-                <span aria-hidden className="text-muted transition-transform duration-150 group-hover:translate-x-1">→</span>
-              </Link>
-            </li>
+            <Link key={m} href={`/session/?mode=${m}`} className="tile rise" style={{ ["--tca" as string]: COLORS[m], animationDelay: `${120 + i * 40}ms` }}>
+              <span className="tile-i"><ModeIcon mode={m} className="h-6 w-6" /></span>
+              <span className="mt-3 block text-[17px] font-extrabold leading-6">{MODES[m].label}</span>
+              <span className="mt-0.5 hidden text-sm leading-5 text-muted md:block">{MODES[m].desc}</span>
+            </Link>
           ))}
-        </ol>
+        </div>
       </section>
 
       <div className="grid gap-4 md:grid-cols-2">
-        <Sec>
-          <h2 className="mb-4 text-2xl leading-8">Points faibles</h2>
+        <Card className="space-y-1">
+          <h2 className="mb-4 text-xl">Points faibles</h2>
           {weak.length === 0 ? (
             <p className="text-sm text-muted">Fais une première session pour voir apparaître tes chapitres à renforcer.</p>
           ) : (
@@ -112,9 +109,9 @@ export default function Dashboard() {
               ))}
             </ul>
           )}
-        </Sec>
-        <Sec>
-          <h2 className="mb-4 text-2xl leading-8">Dernières sessions</h2>
+        </Card>
+        <Card className="space-y-1">
+          <h2 className="mb-4 text-xl">Dernières sessions</h2>
           {last.length === 0 ? (
             <p className="text-sm text-muted">Aucune session pour l&apos;instant.</p>
           ) : (
@@ -130,11 +127,11 @@ export default function Dashboard() {
               ))}
             </ul>
           )}
-        </Sec>
+        </Card>
       </div>
 
-      <Sec>
-        <h2 className="mb-4 text-2xl leading-8">Avancement par chapitre</h2>
+      <Card className="space-y-1">
+        <h2 className="mb-4 text-xl">Avancement par chapitre</h2>
         <div className="grid gap-x-8 gap-y-3 md:grid-cols-2">
           {groups.map((g) => (
             <Link key={g.group} href={`/library/?group=${encodeURIComponent(g.group)}`} className="block hover:bg-ink/[0.03]">
@@ -146,10 +143,10 @@ export default function Dashboard() {
             </Link>
           ))}
         </div>
-      </Sec>
+      </Card>
 
-      <Sec>
-        <h2 className="mb-4 text-2xl leading-8">Mes données</h2>
+      <Card className="space-y-1">
+        <h2 className="mb-4 text-xl">Mes données</h2>
         <p className="mb-3 text-sm text-muted">
           La progression reste dans ce navigateur (aucun serveur). Exporte-la pour la sauvegarder ou la changer d&apos;appareil.
         </p>
@@ -174,21 +171,22 @@ export default function Dashboard() {
             Réinitialiser
           </Button>
         </div>
-      </Sec>
+      </Card>
     </div>
   );
 }
 
-function Stat({ label, value, sub }: { label: string; value: string; sub: string }) {
+const COLORS: Record<Mode, string> = {
+  adaptive: "#1a6fd1", flashcards: "#8549ba", qcm: "#3d9a00", vf: "#ff9600", open: "#00a8a0",
+  cases: "#e5484d", quiz: "#d6409f", exam: "#4a4fe0", interview: "#0b2a4a",
+};
+
+function Stat({ icon, value, label }: { icon: React.ReactNode; value: string; label: string }) {
   return (
-    <div className="border-line px-0 py-5 odd:border-r odd:pr-4 even:pl-4 md:border-r md:px-5 md:first:pl-0 md:last:border-r-0 [&:nth-child(-n+2)]:border-b md:[&:nth-child(-n+2)]:border-b-0">
-      <p className="eyebrow">{label}</p>
-      <p className="serif tabnum mt-2 text-[44px] leading-[48px]">{value}</p>
-      <p className="mt-1 text-sm text-muted">{sub}</p>
+    <div className="card rise flex flex-col items-center px-2 py-4 text-center">
+      {icon}
+      <p className="tabnum mt-1 text-[28px] font-extrabold leading-8">{value}</p>
+      <p className="text-[13px] font-semibold text-muted">{label}</p>
     </div>
   );
-}
-
-function Sec({ children }: { children: React.ReactNode }) {
-  return <section className="border-t border-ink/80 pt-5">{children}</section>;
 }
