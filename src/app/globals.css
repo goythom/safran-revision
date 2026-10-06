@@ -1,0 +1,68 @@
+@import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* Palette from the design brief (R2): Safran blue, AA contrast */
+:root {
+  --bg: #f6f8fb;
+  --surface: #ffffff;
+  --line: #d5dce6;
+  --ink: #111827;
+  --muted: #4b5563;
+  --brand: #1763a9;
+  --brand-soft: #e3eef9;
+  --ok: #15803d;
+  --ok-soft: #dcfce7;
+  --bad: #b42318;
+  --bad-soft: #fee4e2;
+  --warn: #b45309;
+  --warn-soft: #fef3c7;
+}
+.dark {
+  --bg: #0b1626;
+  --surface: #112238;
+  --line: #28405c;
+  --ink: #eaf1f9;
+  --muted: #a9b8cb;
+  --brand: #7fb2e5;
+  --brand-soft: #16365a;
+  --ok: #4ade80;
+  --ok-soft: #12361f;
+  --bad: #fb8a80;
+  --bad-soft: #451a17;
+  --warn: #fbbf24;
+  --warn-soft: #3b2a0b;
+}
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-line: var(--line);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-brand: var(--brand);
+  --color-brand-soft: var(--brand-soft);
+  --color-ok: var(--ok);
+  --color-ok-soft: var(--ok-soft);
+  --color-bad: var(--bad);
+  --color-bad-soft: var(--bad-soft);
+  --color-warn: var(--warn);
+  --color-warn-soft: var(--warn-soft);
+}
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  font-size: 16px;
+  line-height: 24px;
+}
+:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 2px;
+}
+.flip { perspective: 1200px; }
+.flip-inner { transition: transform 0.45s; transform-style: preserve-3d; position: relative; }
+.flip-inner.flipped { transform: rotateY(180deg); }
+.flip-face { backface-visibility: hidden; -webkit-backface-visibility: hidden; }
+.flip-back { transform: rotateY(180deg); position: absolute; inset: 0; }
+@media (prefers-reduced-motion: reduce) { .flip-inner { transition: none; } }
+
+.tabnum { font-variant-numeric: tabular-nums; }
