@@ -31,7 +31,8 @@ export function pool(mode: Mode, cfg: Config, state: AppState): Item[] {
   return ITEMS.filter((it) => {
     if (!kinds.includes(it.kind)) return false;
     if (mode === "open" && it.origKind !== "open") return false;
-    if (mode === "interview" && it.kind === "qcm" && !(it.origKind === "open" && it.group === "A13 Entretien")) return false;
+    if (mode === "interview" && it.kind === "qcm" && !(it.origKind === "case" || (it.origKind === "open" && it.group === "A13 Entretien"))) return false;
+    if (mode === "cases" && it.origKind !== "case" && it.origKind !== "calc") return false;
     if (cfg.groups.length && !cfg.groups.includes(it.group)) return false;
     if (cfg.level && it.level !== cfg.level) return false;
     const p = state.progress[it.id];
